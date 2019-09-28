@@ -4,5 +4,4 @@ class Movie < ActiveRecord::Base
 	@Movie_rate.each do |movie|
 		items<<movie.rating		
 	end
-	return items
 end
