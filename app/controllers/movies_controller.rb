@@ -11,37 +11,42 @@ class MoviesController < ApplicationController
   end
 
   def index
+    
     @movies = Movie.all
-    @order_by = params[:sort] # get the sort key
-    
-    @all_ratings = Movie.uniq.pluck(:rating) # extract the ratings
-    
-    @ratings = params[:ratings]
-    if @ratings == nil
-      if session[:ratings] != nil
-        params[:ratings] = session[:ratings]
-        return redirect_to params: params
-      end
-      @ratings = {}
-      @all_ratings.each {|key| @ratings[key] = "1"}
-    else 
-      session[:ratings] = @ratings
-    end
-
-    if @ratings.length > 0
-      @movies = @movies.where(:rating => @ratings.keys)
+    @all_ratings=Movie.all_ratings
+    if params[:ratings]!=nil        
+        @selected_ratings = params[:ratings]
+        @selected_keys=@selected_ratings.keys
+    elsif session[:ratings]!=nil
+          redirect_to :ratings => session[:ratings] , :sort => params[:sort] and return
+         else
+          @selected_keys=@all_ratings
+        
     end
    
-    if @order_by == nil
-      if session[:sort] != nil
-        params[:sort] = session[:sort]
-        return redirect_to params: params
-      end
-    else
-      session[:sort] = @order_by
+    if params[:sort]==nil
+        if session[:sort]!=nil
+          redirect_to :ratings => params[:ratings] , :sort => session[:sort] and return
+        end
     end
-
-    @movies = @movies.order(@order_by)
+    
+    sort = params[:sort]
+    
+    case sort
+    when 'title'
+        @movies = Movie.where(rating: @selected_keys).order('title')
+        @title='hilite'
+    when 'releasedate'
+        @movies = Movie.where(rating: @selected_keys).order('release_date')
+        @releasedate='hilite'
+    when nil
+        @movies = Movie.where(rating: @selected_keys)       
+    end
+     
+      
+    session[:ratings]=params[:ratings]
+    session[:sort]=params[:sort]  
+    
   end
 
   def new
