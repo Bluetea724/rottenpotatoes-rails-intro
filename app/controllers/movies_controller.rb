@@ -16,6 +16,7 @@ class MoviesController < ApplicationController
     @order_by = params[:sort] # get the sort key
     
     @all_ratings = Movie.distinct.pluck(:rating) # extract the ratings
+    print(@all_ratings)
     
     @ratings = params[:ratings]
     if @ratings == nil
