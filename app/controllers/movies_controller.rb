@@ -26,7 +26,8 @@ class MoviesController < ApplicationController
     else
       #If there is previous data, apply it
       if session[:ratings] != nil
-        @ratings_filter = session[:ratings]
+        params[:rating] = session[:ratings]
+        redirect_to movies_path(params)
       else
         @ratings_filter = @all_ratings
       end
@@ -40,7 +41,7 @@ class MoviesController < ApplicationController
     if @sorting_filter == nil
       if session[:sort] != nil
         params[:sort] = session[:sort]
-        return redirect_to params: params
+        redirect_to movies_path(params)
       end
     else
       session[:sort] = @sorting_filter
