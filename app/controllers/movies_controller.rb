@@ -11,34 +11,43 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.ratings
-
-    @sort_by = params[:sort_by]
-    @ratings = params[:ratings]
-
-    if @sort_by.nil? || @ratings.nil?
-      params[:sort_by] = session[:sort_by] || '' if @sort_by.nil?
-      params[:ratings] = session[:ratings] || Movie.ratings if @ratings.nil?
-      redirect_to movies_path(params)
-    else
-      @movies = Movie.where(rating: @ratings.keys).order(@sort_by)
-      
-      @all_ratings.each do |k,v|
-          if !params[:ratings].keys.include? k
-            @all_ratings[k] = false
-          end
+    @movies = Movie.all
+    @all_ratings = Movie.uniq.pluck(:rating) 
+    
+    #Getting ratings info
+    @ratings_filter = params[:ratings]
+    
+    if @ratings_filter != nil
+      #Getting keys for filtering 
+      @ratings_filter = params[:ratings].keys
+      if @rating_filter != session[:ratings]
+        session[:ratings] = @ratings_filter
       end
-
-      if @sort_by == 'title'
-        @title, @release = 'hilite', ''
-      elsif @sort_by == 'release_date'
-        @title, @release = '','hilite'
+    else
+      #If there is previous data, apply it
+      if session[:ratings] != nil
+        @ratings_filter = session[:ratings]
       else
-        @title, @release = '',''
-      end       
+        @ratings_filter = @all_ratings
+      end
     end
-    session[:sort_by] = @sort_by
-    session[:ratings] = @ratings
+    
+    @movies = @movies.where(:rating => @ratings_filter)
+    
+    #Getting sort info
+    @sorting_filter = params[:sort]
+    
+    if @sorting_filter == nil
+      if session[:sort] != nil
+        params[:sort] = session[:sort]
+        return redirect_to params: params
+      end
+    else
+      session[:sort] = @sorting_filter
+    end
+
+    @movies = @movies.order(@sorting_filter)
+
   end
 
 
