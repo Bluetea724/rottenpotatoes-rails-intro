@@ -29,7 +29,7 @@ class MoviesController < ApplicationController
         params[:rating] = session[:ratings]
         redirect_to movies_path(params)
       else
-        @ratings_filter = @all_ratings
+        @ratings_filter = {}
       end
     end
     
