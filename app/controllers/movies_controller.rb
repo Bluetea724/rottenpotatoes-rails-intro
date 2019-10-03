@@ -28,7 +28,7 @@ class MoviesController < ApplicationController
       session[:ratings] = @ratings_filter
     end
     
-    @movies = @movies.where('rating in (?)', @ratings_filter)
+    @movies = @movies.where(:rating => @ratings.keys)
     
     if params[:sort_by]
       @sorting = params[:sort_by]
