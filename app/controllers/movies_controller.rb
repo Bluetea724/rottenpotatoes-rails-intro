@@ -20,7 +20,7 @@ class MoviesController < ApplicationController
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
       else
-        @ratings_filter = {}
+        @ratings_filter = @all_ratings
       end
     end
     
@@ -28,9 +28,7 @@ class MoviesController < ApplicationController
       session[:ratings] = @ratings_filter
     end
     
-    if @ratings_filter.length > 0
-      @movies = @movies.where(:rating => @ratings_filter)
-    end
+    @movies = @movies.where(:rating => @ratings_filter)
     
     if params[:sort_by]
       @sorting = params[:sort_by]
