@@ -12,44 +12,36 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    @all_ratings = Movie.all_ratings
     @order_by = params[:sort] # get the sort key
     
-    @all_ratings = Movie.uniq.pluck(:rating) # extract the ratings
-    
-    @ratings = params[:ratings]
-    if @ratings == nil
+    if params[:ratings] != nil
+      @ratings_filter = params[:ratings].keys
+    else
       if session[:ratings] != nil
-        params[:ratings] = session[:ratings]
-        return redirect_to params: params
+        @ratings_filter = session[:ratings]
+      else
+        @ratings_filter = {}
       end
-      @ratings = {}
-      @all_ratings.each {|key| @ratings[key] = "1"}
-    else 
-      session[:ratings] = @ratings
     end
-
-    if @ratings.length > 0
-      @movies = @movies.where(:rating => @ratings.keys)
+    
+    if @ratings_filter!=session[:ratings]
+      session[:ratings] = @ratings_filter
     end
+    
+    @movies = @movies.where(:rating => @ratings_filter)
   
     
-    if params[:sort_by]
-      @sorting = params[:sort_by]
+    if @order_by == nil
+      if session[:sort] != nil
+        params[:sort] = session[:sort]
+        return redirect_to params: params
+      end
     else
-      @sorting = session[:sort_by]
+      session[:sort] = @order_by
     end
-    
-    if @sorting!=session[:sort_by]
-      session[:sort_by] = @sorting
-    end
-    
-    if @sorting == 'title'
-          @movies = @movies.order(@sorting)
-          @title_sort = 'hilite'
-    elsif @sorting == 'release_date'
-          @movies = @movies.order(@sorting)
-          @release_sort = 'hilite'
-    end
+
+    @movies = @movies.order(@order_by)
   end
 
 
