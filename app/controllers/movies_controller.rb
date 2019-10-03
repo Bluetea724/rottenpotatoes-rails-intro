@@ -23,7 +23,7 @@ class MoviesController < ApplicationController
       if @rating_filter != session[:ratings]
         session[:ratings] = @ratings_filter
       end
-      @movies = @movies.where(:rating => @ratings_filter)
+      
     else
       #If there is previous data, apply it
       if session[:ratings] != nil
@@ -31,6 +31,8 @@ class MoviesController < ApplicationController
         redirect_to movies_path(params)
       end
     end
+    
+    @movies = @movies.where(:rating => @ratings_filter)
     
     #Getting sort info
     @sorting_filter = params[:sort]
