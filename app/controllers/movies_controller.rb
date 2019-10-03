@@ -17,16 +17,20 @@ class MoviesController < ApplicationController
     #Getting ratings info
     @ratings_filter = params[:ratings]
     
-    if @Ratings_filter == nil
+    if @ratings_filter != nil
+      #Getting keys for filtering 
+      @ratings_filter = params[:ratings].keys
+      if @rating_filter != session[:ratings]
+        session[:ratings] = @ratings_filter
+      end
+      @movies = @movies.where(:rating => @ratings_filter)
+    else
+      #If there is previous data, apply it
       if session[:ratings] != nil
-        params[:ratings] = session[:ratings]
+        params[:rating] = session[:ratings]
         redirect_to movies_path(params)
       end
-    else
-      @Ratings_filter = params[:ratings].keys
     end
-    
-    @movies = @movies.where(:rating => @ratings_filter)
     
     #Getting sort info
     @sorting_filter = params[:sort]
@@ -36,12 +40,11 @@ class MoviesController < ApplicationController
         params[:sort] = session[:sort]
         redirect_to movies_path(params)
       end
+    else
+      session[:sort] = @sorting_filter
     end
-    
+
     @movies = @movies.order(@sorting_filter)
-    
-    session[:sort] = @sorting_filter
-    session[:ratings] = @rating_filter
 
   end
 
