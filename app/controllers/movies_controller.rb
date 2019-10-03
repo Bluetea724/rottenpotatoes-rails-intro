@@ -30,7 +30,7 @@ class MoviesController < ApplicationController
     
     @movies = @movies.where(:rating => @ratings_filter)
     
-    @order_by = params[:sort] # get the sort key
+    @sorting_filter = params[:sort] # get the sort key
     
     if @order_by == nil
       if session[:sort] != nil
@@ -38,10 +38,10 @@ class MoviesController < ApplicationController
         return redirect_to params: params
       end
     else
-      session[:sort] = @order_by
+      session[:sort] = @sorting_filter
     end
 
-    @movies = @movies.order(@order_by)
+    @movies = @movies.order(@sorting_filter)
   end
 
 
