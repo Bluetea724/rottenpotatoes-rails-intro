@@ -15,34 +15,40 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.all_ratings
     
-    if params[:ratings] != nil
+    if params[:ratings]
       @ratings_filter = params[:ratings].keys
-      if @ratings_filter!=session[:ratings]
-        session[:ratings] = @ratings_filter
-      end
     else
-      if session[:ratings] != nil
+      if session[:ratings]
         @ratings_filter = session[:ratings]
       else
         @ratings_filter = @all_ratings
       end
     end
     
-    @movies = @movies.where(:rating => @ratings_filter)
-    
-    #Getting sort info
-    @sorting_filter = params[:sort] 
-    
-    if @sorting_filter == nil
-      if session[:sort] != nil
-        params[:sort] = session[:sort]
-        return redirect_to params: params
-      end
-    else
-      session[:sort] = @sorting_filter
+    if @ratings_filter!=session[:ratings]
+      session[:ratings] = @ratings_filter
     end
-
-    @movies = @movies.order(@sorting_filter)
+    
+    @movies = @movies.where('rating in (?)', @ratings_filter)
+    
+    if params[:sort_by]
+      @sorting = params[:sort_by]
+    else
+      @sorting = session[:sort_by]
+    end
+    
+    if @sorting!=session[:sort_by]
+      session[:sort_by] = @sorting
+    end
+    
+    if @sorting == 'title'
+          @movies = @movies.order(@sorting)
+          @title_sort = 'hilite'
+    elsif @sorting == 'release_date'
+          @movies = @movies.order(@sorting)
+          @release_sort = 'hilite'
+    end
+    
     
   end
 
