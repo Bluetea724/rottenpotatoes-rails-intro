@@ -13,6 +13,8 @@ class MoviesController < ApplicationController
   def index
     
     @movies = Movie.all
+    @order_by = params[:sort] # get the sort key
+    
     @all_ratings = Movie.all_ratings
     
     @all_ratings = Movie.uniq.pluck(:rating) # extract the ratings
@@ -33,8 +35,6 @@ class MoviesController < ApplicationController
       @movies = @movies.where(:rating => @ratings.keys)
     end
 
-  
-    @order_by = params[:sort] # get the sort key
     if @order_by == nil
       if session[:sort] != nil
         params[:sort] = session[:sort]
