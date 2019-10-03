@@ -14,18 +14,17 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.uniq.pluck(:rating) 
     
-    @ratings_filter = params[:ratings]
-    
-    if @ratings_filter == nil
-      
-      if session[:ratings] != nil
-        params[:ratings] = session[:ratings]
-        return redirect_to :ratings => session[:ratings]
-      end
-      
-      @ratings_filter = @all_ratings
-    else
+    if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
+    else
+      if session[:ratings] != nil
+        redirect_to movies_path(:ratings => session[:ratings])
+      else
+        @ratings_filter = @all_ratings
+      end
+    end
+    
+    if @ratings_filter!=session[:ratings]
       session[:ratings] = @ratings_filter
     end
     
