@@ -13,6 +13,7 @@ class MoviesController < ApplicationController
   def index
     @movies = Movie.all
     @all_ratings = Movie.all_ratings
+    @order_by = params[:sort] # get the sort key
     
     if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
@@ -30,8 +31,7 @@ class MoviesController < ApplicationController
     end
     
     @movies = @movies.where(:rating => @ratings_filter)
-    
-    @order_by = params[:sort] # get the sort key
+  
     
     if @order_by == nil
       if session[:sort] != nil
