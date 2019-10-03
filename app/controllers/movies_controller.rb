@@ -16,16 +16,13 @@ class MoviesController < ApplicationController
     
     if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
+      session[:ratings] = @ratings_filter
     else
       if session[:ratings] != nil
-        redirect_to movies_path(:ratings => session[:ratings])
+        @ratings_filter = session[:ratings]
       else
         @ratings_filter = @all_ratings
       end
-    end
-    
-    if @ratings_filter!=session[:ratings]
-      session[:ratings] = @ratings_filter
     end
     
     @movies = @movies.where(:rating => @ratings_filter)
