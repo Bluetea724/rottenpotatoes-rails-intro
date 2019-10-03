@@ -19,7 +19,8 @@ class MoviesController < ApplicationController
       @ratings_filter = params[:ratings].keys
     else
       if session[:ratings] != nil
-        @ratings_filter = session[:ratings]
+        params[:ratings] = session[:ratings]
+        return redirect_to params: params
       else
         @ratings_filter = @all_ratings
       end
