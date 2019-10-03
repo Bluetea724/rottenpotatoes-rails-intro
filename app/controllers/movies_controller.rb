@@ -12,24 +12,22 @@ class MoviesController < ApplicationController
 
   def index
     
-    @movies = Movie.all
-    @all_ratings = Movie.all_ratings
-    
-    if params[:ratings]
-      @ratings_filter = params[:ratings].keys
-    else
-      if session[:ratings]
-        @ratings_filter = session[:ratings]
-      else
-        @ratings_filter = @all_ratings
-      end
+    @all_ratings=Movie.all_ratings
+    if params[:ratings]!=nil        
+        @selected_ratings = params[:ratings]
+        @selected_keys=@selected_ratings.keys
+    elsif session[:ratings]!=nil
+          redirect_to :ratings => session[:ratings] , :sort => params[:sort] and return
+         else
+          @selected_keys=@all_ratings
+        
     end
-    
-    if @ratings_filter!=session[:ratings]
-      session[:ratings] = @ratings_filter
+   
+    if params[:sort]==nil
+        if session[:sort]!=nil
+          redirect_to :ratings => params[:ratings] , :sort => session[:sort] and return
+        end
     end
-    
-    @movies = @movies.where('rating in (?)', @ratings_filter)
 
     if @order_by == nil
       if session[:sort] != nil
