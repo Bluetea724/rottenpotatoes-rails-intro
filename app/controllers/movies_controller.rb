@@ -16,11 +16,13 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.uniq.pluck(:rating)
     
     if params[:ratings] != nil
+      #If there is rating info in params, then extract key info
       @ratings_filter = params[:ratings].keys
       if @ratings_filter!=session[:ratings]
         session[:ratings] = @ratings_filter
       end
     else
+      #Or use save data
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
       else
