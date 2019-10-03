@@ -15,23 +15,22 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     @order_by = params[:sort] # get the sort key
     
-    # Determine whether filtering and how
-    @all_ratings = Movie.all_ratings
-    @filter_ratings = params[:ratings] || session[:ratings] || {}
-    # If no filter specified specify all (create hash similar to what is passed in)
-    if @filter_ratings == {}
-      @filter_ratings = Hash[@all_ratings.map {|rating| [rating, 1]}]
+    if params[:ratings] != nil
+      @ratings_filter = params[:ratings].keys
+    else
+      if session[:ratings] != nil
+        @ratings_filter = session[:ratings]
+      else
+        @ratings_filter = @all_ratings
+      end
     end
     
-    # If either sorting or filtering spec has changed save both and redirect
-    if params[:ratings] != session[:ratings]
-      
-      session[:ratings] = @filter_ratings
-      redirect_to :ratings => @filter_ratings and return
+    if @ratings_filter!=session[:ratings]
+      session[:ratings] = @ratings_filter
     end
     
-    # Filter movies by rating 
-    @movies = Movie.where(rating: @filter_ratings.keys)
+    @movies = @movies.where(:rating => @ratings_filter)
+  
     
     if @order_by == nil
       if session[:sort] != nil
