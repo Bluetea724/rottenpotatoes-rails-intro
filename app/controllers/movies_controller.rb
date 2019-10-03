@@ -27,6 +27,7 @@ class MoviesController < ApplicationController
     
     if @ratings_filter!=session[:ratings]
       session[:ratings] = @ratings_filter
+      redirect_to :ratings => @filter_ratings and return
     end
     
     @movies = @movies.where(:rating => @ratings_filter)
