@@ -15,22 +15,26 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.all_ratings
     
-    if params[:ratings]
-      @ratings_filter = params[:ratings].keys
-    else
-      if session[:ratings]
-        @ratings_filter = session[:ratings]
-      else
-        @ratings_filter = @all_ratings
+    @all_ratings = Movie.uniq.pluck(:rating) # extract the ratings
+    
+    @ratings = params[:ratings]
+    if @ratings == nil
+      if session[:ratings] != nil
+        params[:ratings] = session[:ratings]
+        return redirect_to params: params
       end
+      @ratings = {}
+      @all_ratings.each {|key| @ratings[key] = "1"}
+    else 
+      session[:ratings] = @ratings
     end
-    
-    if @ratings_filter!=session[:ratings]
-      session[:ratings] = @ratings_filter
-    end
-    
-    @movies = @movies.where('rating in (?)', @ratings_filter)
 
+    if @ratings.length > 0
+      @movies = @movies.where(:rating => @ratings.keys)
+    end
+
+  
+    @order_by = params[:sort] # get the sort key
     if @order_by == nil
       if session[:sort] != nil
         params[:sort] = session[:sort]
