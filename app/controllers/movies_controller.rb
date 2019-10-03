@@ -16,7 +16,9 @@ class MoviesController < ApplicationController
     
     if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
-      session[:ratings] = @ratings_filter
+      if @rating_filter != session[:ratings]
+        session[:ratings] = @ratings_filter
+      end
     else
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
