@@ -11,32 +11,37 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @checked_ratings = params[:ratings]
-    @checked_ratings_from_session = session[:ratings]
-    if !@checked_ratings && !@checked_ratings_from_session
-      @checked_ratings = {'G' => true,'PG' => true, 'PG-13'=> true, 'R' => true}
-    elsif @checked_ratings_from_session && !@checked_ratings
-      @checked_ratings = @checked_ratings_from_session
-    end
-   
+    @movies = Movie.all
     @all_ratings = Movie.all_ratings
-    if !params[:sort] && session[:sort]
-      params[:sort] = session[:sort]
-      redirect_to :sort => params[:sort]
-    end
-    if  params[:sort] == 'title'
-      @movies = Movie.where(rating: @checked_ratings.keys).order("title ASC")
-      @hilite_title = 'hilite'
-      session[:sort] = 'title'
-    elsif params[:sort] == 'release_date'
-      @movies = Movie.where(rating: @checked_ratings.keys).order("release_date ASC")
-      @hilite_release_date = 'hilite'
-      session[:sort] = 'release_date'
+    @order_by = params[:sort] # get the sort key
+    
+    if params[:ratings] != nil
+      @ratings_filter = params[:ratings].keys
     else
-      @movies = Movie.where(rating: @checked_ratings.keys)
+      if session[:ratings] != nil
+        @ratings_filter = session[:ratings]
+      else
+        @ratings_filter = @all_ratings
+      end
     end
-    session[:ratings] = @checked_ratings
+    
+    if @ratings_filter!=session[:ratings]
+      session[:ratings] = @ratings_filter
+    end
+    
+    @movies = @movies.where(:rating => @ratings_filter)
+  
+    
+    if @order_by == nil
+      if session[:sort] != nil
+        params[:sort] = session[:sort]
+        return redirect_to params: params
+      end
+    else
+      session[:sort] = @order_by
+    end
 
+    @movies = @movies.order(@order_by)
   end
 
 
