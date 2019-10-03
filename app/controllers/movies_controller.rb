@@ -14,17 +14,13 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.uniq.pluck(:rating) 
     
-    #Getting ratings info
-    @ratings_filter = params[:ratings]
     
-    if @ratings_filter != nil
-      #Getting keys for filtering 
+    if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
       if @rating_filter != session[:ratings]
         session[:ratings] = @ratings_filter
       end
     else
-      #If there is previous data, apply it
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
       else
