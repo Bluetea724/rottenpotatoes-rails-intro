@@ -17,6 +17,9 @@ class MoviesController < ApplicationController
     
     if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
+      if @ratings_filter!=session[:ratings]
+        session[:ratings] = @ratings_filter
+      end
     else
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
@@ -25,13 +28,10 @@ class MoviesController < ApplicationController
       end
     end
     
-    if @ratings_filter!=session[:ratings]
-      session[:ratings] = @ratings_filter
-    end
-    
     @movies = @movies.where(:rating => @ratings_filter)
     
-    @sorting_filter = params[:sort] # get the sort key
+    #Getting sort info
+    @sorting_filter = params[:sort] 
     
     if @sorting_filter == nil
       if session[:sort] != nil
