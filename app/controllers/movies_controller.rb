@@ -18,16 +18,21 @@ class MoviesController < ApplicationController
     if params[:ratings] != nil
       @ratings_filter = params[:ratings].keys
     else
-      if session[:ratings] != nil
-        @ratings_filter = session[:ratings]
-      else
-        @ratings_filter = {}
-      end
+      @ratings_filter = {}
     end
     
-    if @ratings_filter!=session[:ratings]
-      session[:ratings] = @ratings_filter
-    end
+    #else
+    #  if session[:ratings] != nil
+    #    @ratings_filter = session[:ratings]
+    
+    #  else
+    #    @ratings_filter = {}
+    #  end
+    # end
+    
+    #if @ratings_filter!=session[:ratings]
+    #  session[:ratings] = @ratings_filter
+    #end
     
     @movies = @movies.where(:rating => @ratings_filter)
   
