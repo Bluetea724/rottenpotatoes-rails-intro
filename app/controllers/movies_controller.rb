@@ -36,12 +36,12 @@ class MoviesController < ApplicationController
     if @order_by == nil
       if session[:sort] != nil
         params[:sort] = session[:sort]
-        return redirect_to params: params
+        redirect_to params: params and return
       end
     else
       session[:sort] = @order_by
+      redirect_to :sort =>@order_by and return
     end
-
     @movies = @movies.order(@order_by)
   end
 
