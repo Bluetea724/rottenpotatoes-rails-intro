@@ -20,7 +20,7 @@ class MoviesController < ApplicationController
       if session[:ratings] != nil
         @ratings_filter = session[:ratings]
       else
-        @ratings_filter = @all_ratings
+        @ratings_filter = {}
       end
     end
     
