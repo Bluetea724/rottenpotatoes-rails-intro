@@ -32,7 +32,7 @@ class MoviesController < ApplicationController
     
     @sorting_filter = params[:sort] # get the sort key
     
-    if @order_by == nil
+    if @sorting_filter == nil
       if session[:sort] != nil
         params[:sort] = session[:sort]
         return redirect_to params: params
