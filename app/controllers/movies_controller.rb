@@ -11,40 +11,35 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings=Movie.all_ratings
-    if params[:ratings]!=nil        
-        @selected_ratings = params[:ratings]
-        @selected_keys=@selected_ratings.keys
-    elsif session[:ratings]!=nil
-          redirect_to :ratings => session[:ratings] , :sort => params[:sort] and return
-         else
-          @selected_keys=@all_ratings
-        
-    end
-   
-    if params[:sort]==nil
-        if session[:sort]!=nil
-          redirect_to :ratings => params[:ratings] , :sort => session[:sort] and return
-        end
+    @movies = Movie.all
+    @all_ratings = Movie.all_ratings
+    
+    if params[:ratings]
+      @ratings_filter = params[:ratings].keys
+    else
+      if session[:ratings]
+        @ratings_filter = session[:ratings]
+      else
+        @ratings_filter = @all_ratings
+      end
     end
     
-    sort = params[:sort]
-    
-    case sort
-    when 'title'
-        @movies = Movie.where(rating: @selected_keys).order('title')
-        @title='hilite'
-    when 'releasedate'
-        @movies = Movie.where(rating: @selected_keys).order('release_date')
-        @releasedate='hilite'
-    when nil
-        @movies = Movie.where(rating: @selected_keys)       
+    if @ratings_filter!=session[:ratings]
+      session[:ratings] = @ratings_filter
     end
-     
-      
-    session[:ratings]=params[:ratings]
-    session[:sort]=params[:sort]  
+    
+    @movies = @movies.where('rating in (?)', @ratings_filter)
+    
+    if @order_by == nil
+      if session[:sort] != nil
+        params[:sort] = session[:sort]
+        return redirect_to params: params
+      end
+    else
+      session[:sort] = @order_by
+    end
 
+    @movies = @movies.order(@order_by)
   end
 
 
