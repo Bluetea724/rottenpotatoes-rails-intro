@@ -11,9 +11,9 @@
 %table#movies
   %thead
     %tr
-      %th{:class => ("hilite" if @sorting_filter == "title")}= link_to "Movie Title", params.merge(:sort => "title"), id: "title_header"
+      %th{:class => ("hilite", @sorting_filter.include?("title"))}= link_to "Movie Title", params.merge(:sort => "title"), id: "title_header"
       %th Rating
-      %th{:class => ("hilite" if @sorting_filter == "release_date")}= link_to "Release Date", params.merge(:sort => "release_date"), id: "release_date_header"
+      %th{:class => ("hilite", @sorting_filter.include?("release_date"))}= link_to "Release Date", params.merge(:sort => "release_date"), id: "release_date_header"
       %th More Info
   %tbody
     - @movies.each do |movie|
