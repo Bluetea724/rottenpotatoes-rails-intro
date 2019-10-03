@@ -27,7 +27,6 @@ class MoviesController < ApplicationController
     
     if @ratings_filter!=session[:ratings]
       session[:ratings] = @ratings_filter
-      redirect_to :ratings => @filter_ratings and return
     end
     
     @movies = @movies.where(:rating => @ratings_filter)
@@ -40,8 +39,8 @@ class MoviesController < ApplicationController
       end
     else
       session[:sort] = @order_by
-      redirect_to :sort =>@order_by and return
     end
+
     @movies = @movies.order(@order_by)
   end
 
